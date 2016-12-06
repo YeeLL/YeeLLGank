@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#ffffff</color>
+    <color name="colorAccent">#db3937</color>
+
+    <color name="white">#ffffff</color>
+    <color name="tablayout_text">#db3937</color>
+    <color name="text_color_name">#555555</color>
+    <color name="text_light_grey">#8b8b8b</color>
+    <color name="text_grey">#bfbfbf</color>
+    <color name="text_item_topic_title_">#4d4d4d</color>
+    <color name="text_item_topic_desc">#999999</color>
+    <color name="text_title">#4d4d4d</color>
+</resources>
