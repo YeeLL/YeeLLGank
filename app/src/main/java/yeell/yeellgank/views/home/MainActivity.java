@@ -90,7 +90,7 @@ public class MainActivity extends BaseActivity
                     titleList.add(ApiManager.API_DATA_TYPE_TUOZHAN);
                     break;
                 case 6:
-                    titleList.add(ApiManager.API_DATA_TYPE_XIATUIJIAN);
+                    titleList.add(ApiManager.API_DATA_TYPE_XIUXI);
                     break;
                 case 7:
                     titleList.add(ApiManager.API_DATA_TYPE_XIATUIJIAN);

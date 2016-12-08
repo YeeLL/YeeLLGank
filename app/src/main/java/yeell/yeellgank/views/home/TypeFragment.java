@@ -1,32 +1,36 @@
 package yeell.yeellgank.views.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import yeell.yeellgank.R;
 import yeell.yeellgank.adpter.TypeAdapter;
 import yeell.yeellgank.base.BaseFragment;
+import yeell.yeellgank.contract.HomeContract;
 import yeell.yeellgank.https.ApiManager;
 import yeell.yeellgank.model.TypeModel;
-import yeell.yeellgank.presenter.home.Impl.HomePresenter;
+import yeell.yeellgank.presenter.home.HomePresenter;
+import yeell.yeellgank.views.video.VideoActivity;
 
 /**
  * Created by yee on 11/22/16.
  */
 
-public class TypeFragment extends BaseFragment implements IHomeView {
+public class TypeFragment extends BaseFragment implements HomeContract.IHomeView,
+                                                            TypeAdapter.onItemClickListener {
 
     public static String TYPE_DATA = "type";
 
@@ -37,7 +41,6 @@ public class TypeFragment extends BaseFragment implements IHomeView {
 
     private String mType;
     private TypeAdapter mAdapter;
-    private int mOffSet = 0;
     private List<TypeModel> mList = new ArrayList<>();
     private HomePresenter mHomePresenter;
     private int mPage = 0;
@@ -54,11 +57,9 @@ public class TypeFragment extends BaseFragment implements IHomeView {
     protected void init(Bundle savedInstanceState) {
         super.init(savedInstanceState);
         mType = this.getArguments().getString(TYPE_DATA, "all");
-
         mHomePresenter = new HomePresenter(this.getActivity());
         initRecyclerView();
         loadData();
-
     }
 
     private void initRecyclerView() {
@@ -68,7 +69,7 @@ public class TypeFragment extends BaseFragment implements IHomeView {
         //如果可以确定每个item的高度是固定的，设置这个选项可以提高性能
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setAdapter(mAdapter);
-
+        mAdapter.setOnItemClickListener(this);
         mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -94,7 +95,6 @@ public class TypeFragment extends BaseFragment implements IHomeView {
                         //加载更多功能的代码
                        View view = recyclerView.getChildAt(manager.getChildCount()-1);
                         if (view != null){
-                            mPage++;
                             mLoadMore = (LinearLayout) view.findViewById(R.id.item_home_loadmore);
                             mLoadMore.setVisibility(View.VISIBLE);
                             recyclerView.smoothScrollToPosition(lastVisibleItem);
@@ -116,6 +116,8 @@ public class TypeFragment extends BaseFragment implements IHomeView {
             }
         });
 
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
     }
 
     private void loadData() {
@@ -128,14 +130,23 @@ public class TypeFragment extends BaseFragment implements IHomeView {
             mLoadMore.setVisibility(View.GONE);
         }
         mRefresh.setRefreshing(false);
-        if (mOffSet == 0) {
+        if (mPage == 0) {
             mList.clear();
         }
-        mOffSet += 1;
+        mPage += 1;
         List<TypeModel> modelList = (List<TypeModel>) topicModel;
         mList.addAll(modelList);
         if (mList != null && mList.size() != 0) {
             mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onItemClickListener(TypeModel typeModel) {
+        switch (typeModel.type){
+            case ApiManager.API_DATA_TYPE_XIUXI:
+                VideoActivity.start(getActivity(),typeModel);
+                break;
         }
     }
 }

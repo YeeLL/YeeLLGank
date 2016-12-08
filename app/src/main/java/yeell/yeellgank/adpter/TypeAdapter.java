@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import butterknife.BindView;
@@ -26,7 +27,18 @@ public class TypeAdapter extends RecyclerView.Adapter<TypeAdapter.viewHolder> {
     private List<TypeModel> mList;
     private Context mContext;
     private ImageLoader mImageLoader;
-    private boolean isShowLoadMore =false;
+    private boolean isShowLoadMore = false;
+
+    public interface onItemClickListener {
+        void onItemClickListener(TypeModel typeModel);
+    }
+
+    private onItemClickListener mOnItemClickListener;
+
+    public void setOnItemClickListener(onItemClickListener onItemClickListener) {
+        this.mOnItemClickListener = onItemClickListener;
+    }
+
 
     public TypeAdapter(List<TypeModel> list, Context context) {
         this.mList = list;
@@ -34,15 +46,15 @@ public class TypeAdapter extends RecyclerView.Adapter<TypeAdapter.viewHolder> {
         mImageLoader = ImageLoader.getInstance();
     }
 
-    public List<TypeModel> getList(){
+    public List<TypeModel> getList() {
         return mList;
     }
 
-    public void showLoadMore(boolean isShow){
-        if (isShow){
+    public void showLoadMore(boolean isShow) {
+        if (isShow) {
             isShowLoadMore = true;
             mList.add(new TypeModel());
-        }else {
+        } else {
             isShowLoadMore = false;
             mList.remove(mList.size());
         }
@@ -51,30 +63,37 @@ public class TypeAdapter extends RecyclerView.Adapter<TypeAdapter.viewHolder> {
 
     @Override
     public viewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new viewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_home_typedata, parent, false));
+        return new viewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_home_typedata, parent, false));
     }
 
     @Override
     public void onBindViewHolder(viewHolder holder, int position) {
         if (!isShowLoadMore) {
-            TypeModel typeModel = mList.get(position);
+            final TypeModel typeModel = mList.get(position);
             holder.name.setText(typeModel.who);
             holder.type.setText("· " + typeModel.type);
             holder.time.setText(typeModel.publishedAt);
             if (typeModel.type.equals(ApiManager.API_DATA_TYPE_FULI)) {
                 holder.des.setVisibility(View.GONE);
                 holder.descImg.setVisibility(View.VISIBLE);
-                ImageLoader.getInstance().loadTypeDataImage(holder.descImg, typeModel.url, mContext);
+                ImageLoader.getInstance().loadImage(holder.descImg, typeModel.url, mContext);
             } else {
                 holder.des.setVisibility(View.VISIBLE);
                 holder.des.setText(typeModel.desc);
                 if (typeModel.images != null && typeModel.images.size() != 0) {
-                    ImageLoader.getInstance().loadTypeDataImage(holder.descImg, typeModel.images.get(0), mContext);
+                    ImageLoader.getInstance().loadImage(holder.descImg, typeModel.images.get(0), mContext);
                     holder.descImg.setVisibility(View.VISIBLE);
                 } else {
                     holder.descImg.setVisibility(View.GONE);
                 }
             }
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnItemClickListener.onItemClickListener(typeModel);
+                }
+            });
         }
     }
 
