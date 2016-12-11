@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.webkit.WebView;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import yeell.yeellgank.https.ApiManager;
 import yeell.yeellgank.model.TypeModel;
 import yeell.yeellgank.presenter.home.HomePresenter;
 import yeell.yeellgank.views.video.VideoActivity;
+import yeell.yeellgank.views.webActivity.WebActivity;
 
 /**
  * Created by yee on 11/22/16.
@@ -146,6 +148,13 @@ public class TypeFragment extends BaseFragment implements HomeContract.IHomeView
         switch (typeModel.type){
             case ApiManager.API_DATA_TYPE_XIUXI:
                 VideoActivity.start(getActivity(),typeModel);
+                break;
+            case ApiManager.API_DATA_TYPE_ANDROID:
+            case ApiManager.API_DATA_TYPE_APP:
+            case ApiManager.API_DATA_TYPE_iOS:
+            case ApiManager.API_DATA_TYPE_QIANDUAN:
+            case ApiManager.API_DATA_TYPE_TUOZHAN:
+                WebActivity.start(getContext(),typeModel);
                 break;
         }
     }
